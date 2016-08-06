@@ -230,10 +230,11 @@ if (typeof Object.prototype.myMethod !== "function") {
 Use === 
 because JavaScript casts the types on comparison
 
+```javascript
 if (zero == false) {
 	//it will execute
 }
-
+```
 
 ## Avoid Eval
 
@@ -301,6 +302,90 @@ function func() {
           };
 }
 ```
+
+## Syntax tips
+
+* It is useful to start the contructor function name with capital letter - to distinguish it from other, regular funtions:
+
+  * function SomeContructor() {...}
+  * function someFunction() {...}
+
+
+* There are no const variables in JS apart from built-in like Number.MAX_VALUE, so writing variables' names with CAPITAL LETTERS is the convention that programmers use
+
+* some programmers like to use underscore to not that a function is privat _somefunc() (JSLint will complain about it, unless you switch `nomen` to `false`. In firefox, some methods have __someMethod__ which are internal functions.
+ 
+## Documentation
+
+There are two most popular open source tools to generat documentation from comments:
+* JSD Toolkit 
+* YUIDoc
+
+## JSLint
+
+Can detect breaking some good patterns in JS:
+* base in parseInt
+* putting braces in if/else, for loops
+* unreachable code
+* using variables before declaring them
+* using dangerous UTF codes
+* using `void`, `with` and `eval`
+
+
+# Literals and contructors
+
+```javascript
+var a = {}; //is better
+```
+
+than 
+
+```javascript
+var o = new Object(); //
+console.log(o.constructor == Object); //true 
+```
+
+```javascript
+var o = new Object(1);
+console.log(o.constructor --- Number); //true
+console.log(o.toFixed(2)) // "1.00"
+```
+* Object can take various parameters and in result create something else than expected. 
+* takes longer that setting it like var a = {}
+* think if Object takes a constructor as a dynamic value, it is bug-prone
+
+
+## Your own contructors 
+
+```javascript
+var Person = function(name) {
+	this.name = name;
+	this.say = function() {
+		return "I'm " + this.name;
+	};
+}
+
+//this looks like object, but is in fact a function
+var john = new Person("John");
+john.say();
+```
+
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 
