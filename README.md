@@ -1,4 +1,4 @@
-
+
 # Notes from JavaScript Patterns 
 
 ## Basics
@@ -370,22 +370,135 @@ var john = new Person("John");
 john.say();
 ```
 
+Under the hood there are some things happening:
+
+* a new empty object is created under `this` inheriting after the function's prototype
+* to the object pointed by `this` the attributes and methods are added
+* the newly created object is returned as result of the whole operation (unless there wasn't any object returned before that)
+
+```javascript
+var Person = function (name) {
+	// create new object
+	// using literal
+	// var this = {}
+	// actually the "empty" object is not really empty, it inherits after prototype of object Person
+	// var this = Object.create(Person.prototype);
+	
+	//add attributes and methods
+	this.name = name;
+	this.say = function () {
+		return "I'm " + this.name;
+	}
+	//return this;
+}
+```
+
+Making it simpler method say() was added to `this` which means every time we wite `new Preson()` the new version of the function is created. It is ineffective, since the method `say()` does not changes between one instance and another.
+
+It would be better to add this function:
+
+```javascript
+Person.prototype.say = function () {
+	return "I'm " + this.name;
+}
+```
+
+## The value returned by contructor
+
+* The function that is evoked with `new` always returns an object - by default it is an object pointed by `this`. If nothing will be added to `this` it will be "empty" (in reality, inheriting from prototype)
+
+* The contructor returns `this` not explicitly , even if in the function there is no `return` instruction.
+
+* It can easily return something else that `this`
 
 
+```javascript
+var Objectcreator = function () {
+	this.age = 20;
+	
+	var that = {};
+	that.age = 100;
+	return that; // it needs to be an object, that's the condition, does not matter if it's not this
+		     // !!!!!!!!!!!!!!!!!!
+		     // if it returns something else, like boolean or text value
+		     // JS won't raise any exception, but will return `this`
+		     // !!!!!!!!!!!!!!!!!!
+}
 
-
+var obj = new Objectcreator();
+console.log(obj.age);
 ```
 
 
+```javascript
+function Apple () {
+	this.smells = "great";
+} 
+
+//new object
+var apple = new Apple();
+console.log(typeof apple); // "object"
+console.log(apple.smells); // "great"
 
 
+//OOOps forgot new!!!!! anti pattern
+var apple = Apple(); ///wroooooong
+console.log(typeof apple); //undefined
+console.log(window.smells); // "great"  - oh, noo, we're polluting the global namespace
+```
+The above erroneous is eliminated in ES 5 and in `strict mode` it does not point to global object `this` .
 
+Even if ES5 is not available, there are ways to properly create an "object".
 
+## Naming convention
 
+Using `that`
+In order to return an object, and not to pollute the global namespace :
+* use `that` inside the function and return it
+* return literal of the object 
 
+```javascript
+function Apple() {
+	return {
+		smells: "great";	
+	};
+}
 
+var first = new Apple(),
+    second = Apple();
+    
+console.log(first.smells); // "great"    
+console.log(second.smells); // "great"
+```
 
+`that` is just a convention, not part of JS, other names are `me`, `self`
 
+## Self invoking contructor
+
+To solve the problems of previous pattern and save the `prototype` functionality, it's better to write it this way:
+
+```javascript
+function Apple() {
+	if (!(this instanceof Apple)) {
+		return new Apple();
+	}
+	
+	this.smells = "great";
+}
+
+Apple.prototype.wantAnother = true;
+
+//tests of invocations
+var first = new Apple(),
+    second = Apple(); 	
+
+console.log(first.smells);  //"great"
+console.log(second.smells); //"great"
+
+console.log(first.wantAnother);  //true
+console.log(second.wantAnother); //true
+
+```
 
 
 
