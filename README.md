@@ -1,4 +1,3 @@
-
 # Notes from JavaScript Patterns 
 
 ## Basics
@@ -498,6 +497,40 @@ console.log(second.smells); //"great"
 console.log(first.wantAnother);  //true
 console.log(second.wantAnother); //true
 
+```
+
+alternatively you can use something more universal, just not using specific name of the function `Apple`
+This pattern uses the fact, that in each function there is an object called `arguments` containing all the parameters passed to the function on the time of invocation, Additionaly, this object contains property called `calee` which points to invoked function. 
+
+(DEPRECATED IN ES5) !!!
+
+```javascript
+if (!(this instanceof arguments.calee)) {
+	return new arguments.calee();
+}
+```
+
+## Array literal
+
+Arrays in JS are objects.
+
+```javascript
+var a = new Array("this", "is", "an array"); //ANTI PATTERN!!!
+
+var a = ["this", "is", "an array"]; // this is the same array
+				    // elements can be other objects (so arrays as well) 
+		    		    // array is indexed from 0
+
+console.log(a); //object, because arrays are objects
+console.log(a.constructor === Array); //true
+```
+
+### Trap of Array contructor
+
+If the contructor get as parameter one element and it turns out to be a number, it will set the array's length.
+
+```javascript
+if 
 ```
 
 
